@@ -1,0 +1,93 @@
+{
+  "info": {
+    "name": "Trabajo Final Suarez - Crop API",
+    "_postman_id": "6ee11f40-0d0b-4f0b-9ef2-dcb515b1e555",
+    "description": "Coleccion para probar la API de recomendacion de cultivos.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Home",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "Predict Random Forest",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nitrogeno\": 90,\n  \"fosforo\": 42,\n  \"potasio\": 43,\n  \"temperatura\": 20.87,\n  \"humedad\": 82.0,\n  \"ph\": 6.5,\n  \"lluvia\": 202.93\n}"
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/predict/rf",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "predict",
+            "rf"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Predict SVM",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nitrogeno\": 90,\n  \"fosforo\": 42,\n  \"potasio\": 43,\n  \"temperatura\": 20.87,\n  \"humedad\": 82.0,\n  \"ph\": 6.5,\n  \"lluvia\": 202.93\n}"
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/predict/svm",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "predict",
+            "svm"
+          ]
+        }
+      }
+    }
+  ]
+}

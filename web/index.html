@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recomendación de Cultivos</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-1: #081411;
+      --bg-2: #10241e;
+      --bg-3: #16332a;
+      --glass: rgba(255, 255, 255, 0.12);
+      --glass-2: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.16);
+      --text: #f7fbf8;
+      --muted: rgba(255, 255, 255, 0.75);
+      --input-bg: rgba(255, 255, 255, 0.9);
+      --input-text: #1d1d1d;
+      --accent-1: #4fd16d;
+      --accent-2: #34c759;
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+      --ring: rgba(102, 255, 163, 0.22);
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: "SF Pro Display", "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(120, 255, 170, 0.16), transparent 20%),
+        radial-gradient(circle at 82% 20%, rgba(255, 255, 255, 0.08), transparent 18%),
+        radial-gradient(circle at 50% 78%, rgba(95, 180, 255, 0.10), transparent 22%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2), var(--bg-3));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 16px;
+      overflow-x: hidden;
+      color: var(--text);
+      position: relative;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(70px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      width: 260px;
+      height: 260px;
+      top: 80px;
+      left: 40px;
+      background: rgba(112, 255, 173, 0.12);
+    }
+
+    body::after {
+      width: 320px;
+      height: 320px;
+      right: 40px;
+      bottom: 40px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 470px;
+      padding: 30px 26px 24px;
+      border-radius: 34px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.08));
+      backdrop-filter: blur(22px) saturate(140%);
+      -webkit-backdrop-filter: blur(22px) saturate(140%);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow:
+        var(--shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+      animation: fadeUp 0.6s ease;
+    }
+
+    .container::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 34px;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.16),
+        rgba(255, 255, 255, 0.03) 45%,
+        rgba(255, 255, 255, 0.08)
+      );
+      pointer-events: none;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.985);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.05rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+
+    .icon {
+      text-align: center;
+      font-size: 1.9rem;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 22px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      background: var(--input-bg);
+      color: var(--input-text);
+      font-size: 0.97rem;
+      outline: none;
+      transition: all 0.25s ease;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.75),
+        0 1px 1px rgba(0, 0, 0, 0.04);
+    }
+
+    input::placeholder {
+      color: rgba(40, 40, 40, 0.45);
+    }
+
+    input:focus,
+    select:focus {
+      transform: translateY(-1px);
+      border-color: rgba(76, 217, 100, 0.45);
+      box-shadow:
+        0 0 0 5px var(--ring),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      cursor: pointer;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #6b6b6b 50%),
+        linear-gradient(135deg, #6b6b6b 50%, transparent 50%);
+      background-position:
+        calc(100% - 22px) calc(50% - 3px),
+        calc(100% - 16px) calc(50% - 3px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 42px;
+    }
+
+    option {
+      color: #111;
+      background: #fff;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .grid .field.full {
+      grid-column: 1 / -1;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 6px;
+      padding: 15px 16px;
+      border: none;
+      border-radius: 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: white;
+      cursor: pointer;
+      background: linear-gradient(180deg, var(--accent-1), var(--accent-2));
+      box-shadow:
+        0 14px 28px rgba(52, 199, 89, 0.26),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      transition: all 0.25s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 18px 34px rgba(52, 199, 89, 0.32),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+
+    button:active {
+      transform: scale(0.992);
+    }
+
+    .status {
+      min-height: 22px;
+      margin-top: 14px;
+      text-align: center;
+      font-size: 0.94rem;
+      color: rgba(255, 255, 255, 0.84);
+    }
+
+    .error {
+      color: #ffd6d6;
+    }
+
+    .resultado-box {
+      margin-top: 20px;
+      padding: 18px 16px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      text-align: center;
+    }
+
+    .resultado-label {
+      font-size: 0.93rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .resultado {
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      word-break: break-word;
+    }
+
+    @media (max-width: 540px) {
+      .container {
+        padding: 24px 18px 20px;
+        border-radius: 28px;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .resultado {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Recomendación de Cultivos</h1>
+    <div class="icon">🌱</div>
+    <p class="subtitle">
+      Selecciona el modelo y completa los datos del suelo para obtener una recomendación inteligente.
+    </p>
+
+    <div class="field">
+      <label for="modelo">Modelo IA</label>
+      <select id="modelo">
+        <option value="rf">Random Forest</option>
+        <option value="svm">Support Vector Machine (SVM)</option>
+      </select>
+    </div>
+
+    <div class="grid">
+      <div class="field">
+        <label for="nitrogeno">Nitrógeno (N)</label>
+        <input type="number" id="nitrogeno" step="any" placeholder="Ej: 90" />
+      </div>
+
+      <div class="field">
+        <label for="fosforo">Fósforo (P)</label>
+        <input type="number" id="fosforo" step="any" placeholder="Ej: 42" />
+      </div>
+
+      <div class="field">
+        <label for="potasio">Potasio (K)</label>
+        <input type="number" id="potasio" step="any" placeholder="Ej: 43" />
+      </div>
+
+      <div class="field">
+        <label for="temperatura">Temperatura (°C)</label>
+        <input type="number" id="temperatura" step="any" placeholder="Ej: 20.87" />
+      </div>
+
+      <div class="field">
+        <label for="humedad">Humedad (%)</label>
+        <input type="number" id="humedad" step="any" placeholder="Ej: 82" />
+      </div>
+
+      <div class="field">
+        <label for="ph">pH</label>
+        <input type="number" id="ph" step="any" placeholder="Ej: 6.5" />
+      </div>
+
+      <div class="field full">
+        <label for="lluvia">Lluvia (mm)</label>
+        <input type="number" id="lluvia" step="any" placeholder="Ej: 202.93" />
+      </div>
+    </div>
+
+    <button onclick="predecir()">Ejecutar Predicción</button>
+
+    <div class="status" id="estado"></div>
+
+    <div class="resultado-box">
+      <div class="resultado-label">Cultivo recomendado</div>
+      <div class="resultado" id="resultado">Esperando predicción...</div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "http://127.0.0.1:8000";
+
+    function obtenerValor(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function validarDatos(datos) {
+      for (const clave in datos) {
+        if (datos[clave] === "") {
+          return "Completa todos los campos.";
+        }
+        if (isNaN(Number(datos[clave]))) {
+          return "Todos los campos deben ser numéricos.";
+        }
+      }
+
+      if (Number(datos.ph) < 0 || Number(datos.ph) > 14) {
+        return "El pH debe estar entre 0 y 14.";
+      }
+
+      if (Number(datos.humedad) < 0 || Number(datos.humedad) > 100) {
+        return "La humedad debe estar entre 0 y 100.";
+      }
+
+      return null;
+    }
+
+    async function predecir() {
+      const estado = document.getElementById("estado");
+      const resultado = document.getElementById("resultado");
+      const modelo = document.getElementById("modelo").value;
+
+      const datos = {
+        nitrogeno: obtenerValor("nitrogeno"),
+        fosforo: obtenerValor("fosforo"),
+        potasio: obtenerValor("potasio"),
+        temperatura: obtenerValor("temperatura"),
+        humedad: obtenerValor("humedad"),
+        ph: obtenerValor("ph"),
+        lluvia: obtenerValor("lluvia")
+      };
+
+      const error = validarDatos(datos);
+
+      if (error) {
+        estado.textContent = error;
+        estado.className = "status error";
+        return;
+      }
+
+      const payload = {
+        nitrogeno: Number(datos.nitrogeno),
+        fosforo: Number(datos.fosforo),
+        potasio: Number(datos.potasio),
+        temperatura: Number(datos.temperatura),
+        humedad: Number(datos.humedad),
+        ph: Number(datos.ph),
+        lluvia: Number(datos.lluvia)
+      };
+
+      const endpoint = modelo === "svm" ? "/predict/svm" : "/predict/rf";
+
+      estado.textContent = "Realizando predicción...";
+      estado.className = "status";
+      resultado.textContent = "...";
+
+      try {
+        const response = await fetch(API_URL + endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error("No se pudo obtener respuesta de la API.");
+        }
+
+        const data = await response.json();
+        resultado.textContent = data.prediction || "Sin resultado";
+        estado.textContent = "Predicción realizada correctamente.";
+      } catch (error) {
+        resultado.textContent = "Error";
+        estado.textContent = "Error al conectar con la API.";
+        estado.className = "status error";
+      }
+    }
+  </script>
+</body>
+</html>
